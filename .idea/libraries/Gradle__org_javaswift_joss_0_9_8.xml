@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.javaswift:joss:0.9.8">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.javaswift/joss/0.9.8/785c28304e8de4136f39828903ddf0e3343d7ba9/joss-0.9.8.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.javaswift/joss/0.9.8/c0d5c384f630a9c4ad1860b851d2c7371cb96ae2/joss-0.9.8-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
