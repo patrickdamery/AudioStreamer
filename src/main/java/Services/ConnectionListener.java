@@ -1,6 +1,7 @@
 package Services;
 
 import Custom.Attributes;
+import org.w3c.dom.Attr;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,38 +15,49 @@ import java.net.*;
 public class ConnectionListener implements Runnable {
 
     private int listenPort = 50010;
-    private ServerSocket serverSocket;
-    private Socket clientSocket;
-    private InputStreamReader clientReader;
+    private DatagramSocket serverSocket;
+    private DatagramPacket packet;
+    private byte[] data;
 
     public void run() {
 
         // Set up Server Sockets.
         try {
-            serverSocket = new ServerSocket(listenPort);
+            serverSocket = new DatagramSocket(listenPort);
         } catch(IOException io) {}
 
 
         while(Attributes.active) {
             try {
-                System.out.println("Waiting for client");
 
                 // Listen for any incoming connections.
-                clientSocket = serverSocket.accept();
+                data = new byte[1024];
+                packet = new DatagramPacket(data, data.length);
+                serverSocket.receive(packet);
                 System.out.println("Connected to client");
 
                 // Extract ip address and port.
-                InetAddress ip = clientSocket.getInetAddress();
-                clientReader = new InputStreamReader(clientSocket.getInputStream(), "UTF-8");
-                StringBuilder receivedData = new StringBuilder();
-                int data = clientReader.read();
-                while(data != -1){
-                    char theChar = (char) data;
-                    receivedData.append(theChar);
-                    data = clientReader.read();
-                }
-                int port = Integer.parseInt(receivedData.toString());
+                InetAddress ip = packet.getAddress();
+                int port = packet.getPort();
                 InetSocketAddress clientAddress = new InetSocketAddress(ip, port);
+
+                // Create a Datagram socket to communicate exclusively with client.
+                DatagramSocket dedicatedSocket = new DatagramSocket();
+                String dedicatedPort = Integer.toString(dedicatedSocket.getLocalPort());
+                data = dedicatedPort.getBytes();
+
+                // Send port to client.
+                packet = new DatagramPacket(data, data.length, clientAddress);
+                serverSocket.send(packet);
+
+                // Now wait for client to establish contact with dedicated Datagram socket.
+                data = new byte[1024];
+                packet = new DatagramPacket(data, data.length);
+                dedicatedSocket.setSoTimeout(15000);
+                dedicatedSocket.receive(packet);
+
+                // Now add socket to listener Sockets.
+                Attributes.listenerSocket.add(dedicatedSocket);
 
                 // Now add Socket Address to the listener Addresses.
                 Attributes.listenerAddress.add(clientAddress);

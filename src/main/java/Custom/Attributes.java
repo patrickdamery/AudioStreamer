@@ -1,6 +1,7 @@
 package Custom;
 
 import java.io.File;
+import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 
@@ -18,5 +19,5 @@ public class Attributes {
     public static File binaryRecording = new File("recording.bin");
     public static volatile boolean active = true;
     public static volatile ArrayList<InetSocketAddress> listenerAddress = new ArrayList<InetSocketAddress>();
-
+    public static volatile ArrayList<DatagramSocket> listenerSocket = new ArrayList<DatagramSocket>();
 }

@@ -10,6 +10,7 @@ import org.javaswift.joss.model.StoredObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Attr;
 
 import java.io.*;
 import java.net.*;
@@ -32,8 +33,8 @@ public class Stream implements Runnable {
         // Setup the Server Sockets.
         try {
             audioInputSocket = new DatagramSocket(audioPort);
+            System.out.println("IP address :" + audioInputSocket.getLocalAddress());
             audioInputSocket.setSoTimeout(120000);
-            audioOutputSocket = new DatagramSocket();
             receiveData = new byte[Attributes.buffer];
             receivePacket = new DatagramPacket(receiveData, receiveData.length);
         } catch(SocketException se) {}
@@ -56,7 +57,7 @@ public class Stream implements Runnable {
     private void getPackets() {
         try {
             // Wait until packet is received.
-            System.out.println("Receiving Data");
+            //System.out.println("Receiving Data");
             audioInputSocket.receive(receivePacket);
 
             // Write to Binary file.
@@ -87,14 +88,16 @@ public class Stream implements Runnable {
      */
     private void sendData(byte[] data) {
         try {
-            System.out.println("Trying to send data.");
 
-            // Take current listeners and loop through them to send audio.
+            // Take current listeners addresses and sockets
+            // and loop through them to send audio.
             ArrayList<InetSocketAddress> l = Attributes.listenerAddress;
-            System.out.println("Listeners length :" + l.size());
-
+            ArrayList<DatagramSocket> s = Attributes.listenerSocket;
             for(int i = 0; i < l.size(); i++) {
-                System.out.println(l.get(i).toString());
+
+                // Get Datagram Socket.
+                audioOutputSocket = s.get(i);
+
                 // Set up Datagram Packet to send data.
                 DatagramPacket audioPacket = new DatagramPacket(data, data.length, l.get(i).getAddress(), l.get(i).getPort());
 
