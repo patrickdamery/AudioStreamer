@@ -2,6 +2,7 @@ package Services;
 
 import Utils.DB;
 import Custom.Attributes;
+import org.java_websocket.WebSocketImpl;
 import org.javaswift.joss.client.factory.AccountConfig;
 import org.javaswift.joss.client.factory.AccountFactory;
 import org.javaswift.joss.model.Account;
@@ -10,7 +11,6 @@ import org.javaswift.joss.model.StoredObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Attr;
 
 import java.io.*;
 import java.net.*;
@@ -23,21 +23,36 @@ import java.util.Collection;
  * Author: Robert Patrick Damery
  */
 public class Stream implements Runnable {
+    private int webPort = 8887;
     private int audioPort = 50005;
+    private AudioWebSocket webSocket;
     private DatagramSocket audioInputSocket, audioOutputSocket;
     private byte[] receiveData;
     private DatagramPacket receivePacket;
     private DataOutputStream fileWriter;
 
     public void run() {
+
         // Setup the Server Sockets.
         try {
+            // Set up web sockets.
+            WebSocketImpl.DEBUG = false;
+            webSocket = new AudioWebSocket(webPort);
+            webSocket.start();
+
+            // Set up UDP sockets.
             audioInputSocket = new DatagramSocket(audioPort);
             System.out.println("IP address :" + audioInputSocket.getLocalAddress());
             audioInputSocket.setSoTimeout(120000);
+
+            // Define data and packet attributes.
             receiveData = new byte[Attributes.buffer];
             receivePacket = new DatagramPacket(receiveData, receiveData.length);
-        } catch(SocketException se) {}
+        } catch(SocketException se) {
+            // Do nothing.
+        } catch(UnknownHostException uhe) {
+            // Do nothing.
+        }
 
         // Set up the DataOutputStream.
         try {
@@ -56,6 +71,7 @@ public class Stream implements Runnable {
      */
     private void getPackets() {
         try {
+
             // Wait until packet is received.
             //System.out.println("Receiving Data");
             audioInputSocket.receive(receivePacket);
@@ -63,8 +79,11 @@ public class Stream implements Runnable {
             // Write to Binary file.
             fileWriter.write(receiveData, 0, receiveData.length);
 
-            // Send data.
+            // Send data through UDP socket.
             sendData(receivePacket.getData());
+
+            // Send data through websocket.
+            webSocket.sendToAll(receivePacket.getData());
         } catch (IOException e) {
             e.printStackTrace();
             if(Attributes.active) {
@@ -174,10 +193,11 @@ public class Stream implements Runnable {
         while(!succeed) {
             System.out.println("Attempting to upload.");
             try {
+
                 // Set up Swift account.
                 AccountConfig config = new AccountConfig();
                 config.setUsername("patrick@alonica.net");
-                config.setPassword("\"Larzond\"");
+                config.setPassword("P1cstart+");
                 config.setAuthUrl("https://auth.runabove.io/v2.0/tokens");
                 config.setTenantId("1adae5549ebc418e9a0f05d70febef76");
                 config.setTenantName("32384612");
@@ -281,7 +301,7 @@ public class Stream implements Runnable {
                 // Set up Swift account.
                 AccountConfig config = new AccountConfig();
                 config.setUsername("patrick@alonica.net");
-                config.setPassword("\"Larzond\"");
+                config.setPassword("P1cstart+");
                 config.setAuthUrl("https://auth.runabove.io/v2.0/tokens");
                 config.setTenantId("1adae5549ebc418e9a0f05d70febef76");
                 config.setTenantName("32384612");

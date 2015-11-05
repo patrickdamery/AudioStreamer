@@ -15,8 +15,10 @@ import Utils.DB;
 public class Server {
 
     public static void main(String args[]) {
+
         // Define current alarm state.
         boolean alarm = false;
+
         // Configure apache.
         org.apache.log4j.BasicConfigurator.configure(new NullAppender());
 
@@ -28,12 +30,15 @@ public class Server {
                     System.out.println(result.getString("state"));
 
                     try {
+
                         // Check that query was successful.
                         boolean success = result.getBoolean(DB.SUCCESS);
                         if (success) {
+
                             // Check if alarm was activated.
                             Attributes.state = result.getString("state");
                             if (!Attributes.state.equalsIgnoreCase("inactive")) {
+
                                 // If alarm was activated get Attributes.
                                 Attributes.alarmId = result.getInt("alarmId");
                                 Attributes.userId = result.getInt("id");
