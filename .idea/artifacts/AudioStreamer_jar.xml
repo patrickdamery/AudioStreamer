@@ -2,7 +2,6 @@
   <artifact type="jar" build-on-make="true" name="AudioStreamer:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/AudioStreamer_jar</output-path>
     <root id="archive" name="AudioStreamer.jar">
-      <element id="module-output" name="AudioStreamer" />
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" />
       </element>
@@ -20,6 +19,8 @@
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/log4j/log4j/1.2.17/5af35056b4d257e4b64b9e8069c0746e8b08629f/log4j-1.2.17.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.2/81d61b7f33ebeab314e07de0cc596f8e858d97/slf4j-api-1.7.2.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.httpcomponents/httpclient/4.2.1/b69bd03af60bf487b3ae1209a644ecac587bf6fc/httpclient-4.2.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/TooTallNate-Java-WebSocket-58d1778/dist/java_websocket.jar" path-in-jar="/" />
+      <element id="module-output" name="AudioStreamer" />
     </root>
   </artifact>
 </component>

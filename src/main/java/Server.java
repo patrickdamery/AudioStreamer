@@ -1,5 +1,6 @@
 import Custom.Attributes;
 import Services.ConnectionListener;
+import Services.TCPConnectionListener;
 import Services.StateTracker;
 import Services.Stream;
 import org.apache.log4j.varia.NullAppender;
@@ -37,6 +38,13 @@ public class Server {
 
                             // Check if alarm was activated.
                             Attributes.state = result.getString("state");
+                            /*if (Attributes.state.equalsIgnoreCase("inactive")) {
+
+                                // If alarm was activated get Attributes.
+                                Attributes.alarmId = 10;
+                                Attributes.userId = 1;
+                                alarm = true;
+                            }*/
                             if (!Attributes.state.equalsIgnoreCase("inactive")) {
 
                                 // If alarm was activated get Attributes.
@@ -54,6 +62,7 @@ public class Server {
                 }
                 Thread.sleep(2000);
             } catch(InterruptedException ie) {
+                ie.printStackTrace();
             }
         }
 
@@ -62,15 +71,23 @@ public class Server {
             DB.addRecording(Integer.toString(Attributes.alarmId), Integer.toString(Attributes.userId));
         } catch (Exception e) {
             // Don't do anything.
+            e.printStackTrace();
         }
 
         // Start the server threads.
+        System.out.println("Starting Connection Listener Thread.");
         Thread ConnectionListener = new Thread(new ConnectionListener());
         ConnectionListener.start();
 
+        System.out.println("Starting TCP Fallback Listener Thread.");
+        Thread TCPConnectionListener = new Thread(new TCPConnectionListener());
+        TCPConnectionListener.start();
+
+        System.out.println("Starting Stream Thread.");
         Thread Stream = new Thread(new Stream());
         Stream.start();
 
+        System.out.println("Starting State Tracker Thread.");
         Thread StateTracker = new Thread(new StateTracker());
         StateTracker.start();
     }

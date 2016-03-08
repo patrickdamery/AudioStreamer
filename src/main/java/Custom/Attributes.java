@@ -1,5 +1,6 @@
 package Custom;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
@@ -20,4 +21,5 @@ public class Attributes {
     public static volatile boolean active = true;
     public static volatile ArrayList<InetSocketAddress> listenerAddress = new ArrayList<InetSocketAddress>();
     public static volatile ArrayList<DatagramSocket> listenerSocket = new ArrayList<DatagramSocket>();
+    public static volatile ArrayList<DataOutputStream> tcpListeners = new ArrayList<DataOutputStream>();
 }

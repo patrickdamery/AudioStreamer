@@ -48,16 +48,18 @@ public class Stream implements Runnable {
             // Define data and packet attributes.
             receiveData = new byte[Attributes.buffer];
             receivePacket = new DatagramPacket(receiveData, receiveData.length);
-        } catch(SocketException se) {
-            // Do nothing.
-        } catch(UnknownHostException uhe) {
-            // Do nothing.
+        } catch(SocketException e) {
+            e.printStackTrace();
+        } catch(UnknownHostException e) {
+            e.printStackTrace();
         }
 
         // Set up the DataOutputStream.
         try {
             fileWriter = new DataOutputStream(new FileOutputStream(Attributes.binaryRecording));
-        } catch(FileNotFoundException fe) {}
+        } catch(FileNotFoundException fe) {
+            fe.printStackTrace();
+        }
 
         // Get packets while alarm is active.
         while(Attributes.active) {
@@ -110,21 +112,45 @@ public class Stream implements Runnable {
 
             // Take current listeners addresses and sockets
             // and loop through them to send audio.
-            ArrayList<InetSocketAddress> l = Attributes.listenerAddress;
-            ArrayList<DatagramSocket> s = Attributes.listenerSocket;
-            for(int i = 0; i < l.size(); i++) {
+            ArrayList<InetSocketAddress> udpListeners = Attributes.listenerAddress;
+            ArrayList<DatagramSocket> udpSockets = Attributes.listenerSocket;
+            for(int i = 0; i < udpListeners.size(); i++) {
+
+                System.out.println("UDP Listeners: "+udpListeners.size());
+
+                System.out.println(udpSockets.get(i).toString());
 
                 // Get Datagram Socket.
-                audioOutputSocket = s.get(i);
+                audioOutputSocket = udpSockets.get(i);
 
                 // Set up Datagram Packet to send data.
-                DatagramPacket audioPacket = new DatagramPacket(data, data.length, l.get(i).getAddress(), l.get(i).getPort());
+                DatagramPacket audioPacket = new DatagramPacket(data, data.length, udpListeners.get(i));
 
                 // Send audio packet.
                 audioOutputSocket.send(audioPacket);
-                System.out.println("Sending Data.");
             }
-        } catch (Exception e) {}
+
+            // Take current listeners and put them aside in case of update.
+            ArrayList<DataOutputStream> tcpListeners = Attributes.tcpListeners;
+            System.out.println("TCP Listeners length :" + tcpListeners.size());
+
+            // Loop through all TCP listeners.
+            for(int i = 0; i < tcpListeners.size(); i++) {
+                try {
+                    DataOutputStream dos = tcpListeners.get(i);
+
+                    // Send data.
+                    dos.write(data, 0, data.length);
+                } catch(SocketException se) {
+                    System.out.println("Broken Pipe, removing TCP connection.");
+
+                    // If we have a broken pipe remove it from listeners.
+                    Attributes.tcpListeners.remove(i);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /***
