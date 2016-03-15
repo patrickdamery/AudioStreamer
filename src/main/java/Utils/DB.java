@@ -91,12 +91,13 @@ public class DB {
     /***
      * Function that deletes recording from table
      */
-    public static JSONObject updateRecording(final String recId, String userId, String size) {
+    public static JSONObject updateRecording(final String recId, String userId, String size, String url) {
         // Building Parameters
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("recId", recId));
         params.add(new BasicNameValuePair("id", userId));
         params.add(new BasicNameValuePair("size", size));
+        params.add(new BasicNameValuePair("url", url));
 
 
         // getting JSON Object

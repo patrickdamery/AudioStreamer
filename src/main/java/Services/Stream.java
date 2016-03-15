@@ -216,17 +216,18 @@ public class Stream implements Runnable {
             e.printStackTrace();
         }
         boolean succeed = false;
+        String url = "";
         while(!succeed) {
             System.out.println("Attempting to upload.");
             try {
 
                 // Set up Swift account.
                 AccountConfig config = new AccountConfig();
-                config.setUsername("patrick@alonica.net");
-                config.setPassword("P1cstart+");
-                config.setAuthUrl("https://auth.runabove.io/v2.0/tokens");
-                config.setTenantId("1adae5549ebc418e9a0f05d70febef76");
-                config.setTenantName("32384612");
+                config.setUsername("T4Fz38wXm94q");
+                config.setPassword("8TusfuMaWtYvNHX9RemdaGPAFRDuPkxT");
+                config.setAuthUrl("https://auth.cloud.ovh.net/v2.0/tokens");
+                config.setTenantId("5641e65b919f450a83c47d4e41ad7038");
+                config.setTenantName("7820327448102325");
                 Account account = new AccountFactory(config).createAccount();
 
                 // Now get the Cabalry Container.
@@ -240,6 +241,7 @@ public class Stream implements Runnable {
                 Collection<StoredObject> objects = container.list();
                 for (StoredObject currentObject : objects) {
                     if(currentObject.getName().equals(Attributes.alarmId + ".wav")) {
+                        url = currentObject.getPublicURL();
                         System.out.println("Uploaded Successfully.");
                         succeed = true;
                     }
@@ -253,7 +255,7 @@ public class Stream implements Runnable {
         }
 
         // Now update recording in db.
-        DB.updateRecording(Integer.toString(Attributes.alarmId), Integer.toString(Attributes.userId), Long.toString(size));
+        DB.updateRecording(Integer.toString(Attributes.alarmId), Integer.toString(Attributes.userId), Long.toString(size), url);
 
         // Kill audio server.
         DB.terminate();
@@ -321,16 +323,17 @@ public class Stream implements Runnable {
             e.printStackTrace();
         }
         boolean succeed = false;
+        String url = "";
         while(!succeed) {
             System.out.println("Attempting to upload.");
             try {
                 // Set up Swift account.
                 AccountConfig config = new AccountConfig();
-                config.setUsername("patrick@alonica.net");
-                config.setPassword("P1cstart+");
-                config.setAuthUrl("https://auth.runabove.io/v2.0/tokens");
-                config.setTenantId("1adae5549ebc418e9a0f05d70febef76");
-                config.setTenantName("32384612");
+                config.setUsername("T4Fz38wXm94q");
+                config.setPassword("8TusfuMaWtYvNHX9RemdaGPAFRDuPkxT");
+                config.setAuthUrl("https://auth.cloud.ovh.net/v2.0/tokens");
+                config.setTenantId("5641e65b919f450a83c47d4e41ad7038");
+                config.setTenantName("7820327448102325");
                 Account account = new AccountFactory(config).createAccount();
 
                 // Now get the Cabalry Container.
@@ -344,6 +347,7 @@ public class Stream implements Runnable {
                 Collection<StoredObject> objects = container.list();
                 for (StoredObject currentObject : objects) {
                     if(currentObject.getName().equals(Attributes.alarmId + ".wav")) {
+                        url = currentObject.getPublicURL();
                         System.out.println("Uploaded Successfully.");
                         succeed = true;
                     }
@@ -357,7 +361,7 @@ public class Stream implements Runnable {
         }
 
         // Now update recording in db.
-        DB.updateRecording(Integer.toString(Attributes.alarmId), Integer.toString(Attributes.userId), Long.toString(size));
+        DB.updateRecording(Integer.toString(Attributes.alarmId), Integer.toString(Attributes.userId), Long.toString(size), url);
 
         // Kill audio server.
         DB.lost(Integer.toString(Attributes.alarmId));
